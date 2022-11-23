@@ -145,7 +145,7 @@ func (p *pod) DeleteMultiplePod(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"msg":  "刪除多个Pod成功",
+		"msg":  "批量刪除成功",
 		"data": nil,
 	})
 }

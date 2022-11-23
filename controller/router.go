@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"k8s-platform/mertics"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,6 +30,10 @@ func (r *router) InitApiRouter(router *gin.Engine) {
 		GET("/api/k8s/pod/container", Pod.GetPodContainer).
 		GET("/api/k8s/pod/log", Pod.GetPodLog).
 		GET("/api/k8s/pod/numns", Pod.GetPodNumPerNs).
+
+		// mertics操作
+		GET("/mertic", mertics.GetMertics).
+		POST("/mertic/del", mertics.DeleteMertics).
 		//deployment操作
 		GET("/api/k8s/deployments", Deployment.GetDeployments).
 		GET("/api/k8s/deployment/detail", Deployment.GetDeploymentDetail).

@@ -96,8 +96,8 @@ func (p *pod) DeleteMultiplePod(ps PodList) (err error) {
 	for _, pod := range ps {
 		err = K8s.ClientSet.CoreV1().Pods(pod.Namespace).Delete(context.TODO(), pod.PodName, metav1.DeleteOptions{})
 		if err != nil {
-			logger.Error("删除Pod失败", err)
-			return errors.New("删除Pod失败" + err.Error())
+			logger.Error(pod.PodName+"删除Pod失败", err)
+			return errors.New(pod.PodName + "删除Pod失败" + err.Error())
 		}
 	}
 	return nil
