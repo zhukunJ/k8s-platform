@@ -15,11 +15,6 @@ var Pod pod
 
 type pod struct{}
 
-var podList []struct {
-	PodName   string `json:"podname"`
-	Namespace string `json:"namespace"`
-}
-
 //Pod列表，支持过滤、排序、分页
 func (p *pod) GetPods(ctx *gin.Context) {
 	//匿名结构体，用于定义入参，get请求为form格式，其他请求为json格式

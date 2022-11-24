@@ -26,7 +26,7 @@ func (*Iopsflow) TableName() string {
 // CREATE TABLE `iops-access` (
 // 	`id` int NOT NULL AUTO_INCREMENT,
 // 	`username` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-//	`password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+// 	`password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
 //  `editor` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
 // 	`read` boolean 		DEFAULT  0,
 // 	`write` boolean 	DEFAULT 0,
@@ -39,7 +39,5 @@ func (*Iopsflow) TableName() string {
 // 	UNIQUE KEY `username` (`username`)
 // ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
-// insert into `iops-access` (`username`,`editor`,`read`,`write`,`delete`,`avatar`,`created_at`,`updated_at`,`deleted_at`) values ('admin','admin',1,1,1,'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',null,null,null)
-// id | username | password | editor | read | write | delete | avatar                                                              | created_at          | updated_at          | deleted_at |
-// +----+----------+----------+--------+------+-------+--------+---------------------------------------------------------------------+---------------------+---------------------+------------+
-// |  1 | intel    | intel123 | Admin  |    1 |     1 |      1 | https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif | 2022-10-27 19:02:34 | 2022-10-27 19:02:34 | NULL       |
+// 增加数据
+// insert into `iops-access` (`username`,`password`,`editor`,`read`,`write`,`delete`,`avatar`,`created_at`,`updated_at`,`deleted_at`) values ('intel','intel123','Admin',1,1,1,'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',null,null,null)

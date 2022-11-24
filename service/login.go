@@ -14,6 +14,10 @@ type login struct{}
 //验证账号密码
 func (l *login) Auth(username, password string) (udata *model.Iopsflow, err error) {
 	data, err := Iopsflow.GetByName(username)
+	if err != nil {
+		logger.Error("获取用户信息失败,", err)
+		return nil, err
+	}
 
 	// 如果密码不正确，返回错误
 	if data.Password != password {

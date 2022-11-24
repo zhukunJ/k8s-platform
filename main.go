@@ -2,9 +2,9 @@ package main
 
 import (
 	"k8s-platform/config"
-	"k8s-platform/controller"
 	"k8s-platform/db"
 	"k8s-platform/middle"
+	"k8s-platform/router"
 	"k8s-platform/service"
 	"net/http"
 
@@ -22,7 +22,7 @@ func main() {
 	r.Use(middle.Cors())
 	// r.Use(middle.JWTAuth())
 	//初始化路由规则
-	controller.Router.InitApiRouter(r)
+	router.Router.InitApiRouter(r)
 	//终端websocket
 	go func() {
 		http.HandleFunc("/ws", service.Terminal.WsHandler)

@@ -5,8 +5,10 @@ import "time"
 const (
 	//gin监听的地址和端口
 	ListenAddr = "0.0.0.0:9090"
-	KubeConfig = "C:\\Users\\kunjiezx\\.kube\\config"
-	//KubeConfig = "C:\\custom\\project\\go\\config"
+	// windows
+	// KubeConfig = "C:\\Users\\kunjiezx\\.kube\\config"
+	// linux or mac
+	KubeConfig = "/Users/admin/.kube/config"
 	//查看日志的行数
 	PodLogTailLine = 2000
 	//管理员账号密码

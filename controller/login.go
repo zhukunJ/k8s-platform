@@ -65,13 +65,13 @@ func (l *login) UserInfo(ctx *gin.Context) {
 
 	permissions := []string{}
 
-	if data.Read == true {
+	if data.Read {
 		permissions = append(permissions, "read:system")
 	}
-	if data.Write == true {
+	if data.Write {
 		permissions = append(permissions, "write:system")
 	}
-	if data.Delete == true {
+	if data.Delete {
 		permissions = append(permissions, "delete:system")
 	}
 	avatar := data.Avatar
