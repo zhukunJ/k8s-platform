@@ -40,6 +40,9 @@ func (r *router) InitApiRouter(router *gin.Engine) {
 		// 远程执行命令
 		POST("/api/host/remoteexecution", controller.Remoteexecution.GetRemoteexecutions).
 
+		//websocket host
+		GET("/api/host/ws", controller.RunWebSSH).
+
 		//deployment操作
 		GET("/api/k8s/deployments", controller.Deployment.GetDeployments).
 		GET("/api/k8s/deployment/detail", controller.Deployment.GetDeploymentDetail).
