@@ -2,6 +2,7 @@ package router
 
 import (
 	"k8s-platform/mertics"
+	"k8s-platform/websocketflow"
 
 	"k8s-platform/controller"
 
@@ -41,7 +42,10 @@ func (r *router) InitApiRouter(router *gin.Engine) {
 		POST("/api/host/remoteexecution", controller.Remoteexecution.GetRemoteexecutions).
 
 		//websocket host
-		GET("/api/host/ws", controller.RunWebSSH).
+		GET("/api/host/ws", websocketflow.RunWebSSH).
+
+		//websocket jenkinslogs
+		GET("/api/jenkinslogs/ws", websocketflow.RunWebLog).
 
 		//deployment操作
 		GET("/api/k8s/deployments", controller.Deployment.GetDeployments).

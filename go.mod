@@ -14,6 +14,7 @@ require (
 )
 
 require (
+	github.com/bndr/gojenkins v1.1.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/spdystream v0.0.0-20160310174837-449fdfce4d96 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect

@@ -1,11 +1,8 @@
-package controller
+package websocketflow
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"net/http"
-	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -13,20 +10,6 @@ import (
 	"github.com/wonderivan/logger"
 	"golang.org/x/crypto/ssh"
 )
-
-// 定义一个结构体 方便保存各种连接信息
-type MySSH struct {
-	Websocket *websocket.Conn
-	Stdin     io.WriteCloser
-	Stdout    *wsBufferWriter
-	Session   *ssh.Session
-}
-
-// 定义一个wsBufferWriter 并且写入时候加锁 防止stdout跟stderr同时写入
-type wsBufferWriter struct {
-	buffer bytes.Buffer
-	mu     sync.Mutex
-}
 
 //定义write方法， 防止stdout跟stderr同时写入
 func (w *wsBufferWriter) Write(p []byte) (int, error) {
@@ -137,7 +120,7 @@ func Send2SSH(mySSh *MySSH) {
 		if err != nil {
 			fmt.Println("ssh发送数据失败：", err)
 		}
-		fmt.Println("ssh发送数据：", string(wsData))
+		// fmt.Println("ssh发送数据：", string(wsData))
 
 	}
 
