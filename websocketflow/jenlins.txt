@@ -144,70 +144,55 @@ func SendlogWeb(mySSh *MySSH) {
 				// break
 			}
 		}
-		// 基于for循环，每隔0.5秒，获取一次jenkins日志每次获取的日志长度
-		for {
-			//
-			fmt.Println("for循环开始了!")
-			time.Sleep(1000 * time.Millisecond)
-			// 获取最后构建的日志
-			job, err := jenkins.GetJob(ctx, "demo")
+		// 匿名函数jenkins_log_repeat
+
+		str := jenkins_log_repeat(jenlins_log_count, mySSh, client, jenkins, params)
+		fmt.Println(str)
+
+	}
+}
+
+func jenkins_log_repeat(jenlins_log_count int, mySSh *MySSH, client *Intelops, jenkins *gojenkins.Jenkins, params map[string]string) string {
+	_, jenlins_log_new, err := client.BuildJob(jenkins, "demo", params)
+	if err != nil {
+		log.Printf("ERR, %v\n", err)
+	}
+	jenkins_new_count := len(strings.Split(jenlins_log_new, "\n"))
+	if strings.Contains(jenlins_log_new, "End of Pipeline") {
+		for _, v := range strings.Split(jenlins_log_new, "\n")[jenlins_log_count:] {
+			// 读取ssh输出，发送到websocket中
+			err := mySSh.Websocket.WriteMessage(websocket.TextMessage, []byte(v))
 			if err != nil {
-				log.Printf("ERR, %v\n", err)
-			}
-			lastBuild, err := job.GetLastBuild(ctx)
-			if err != nil {
-				log.Printf("ERR, %v\n", err)
-			}
-			logs := lastBuild.GetConsoleOutput(ctx)
-			// 如果日志长度不一样，就发送基于jenkins_log_count的日志后长度，到websocket中
-			if len(strings.Split(logs, "\n")) > jenlins_log_count {
-				for _, v := range strings.Split(logs, "\n")[jenlins_log_count:len(strings.Split(logs, "\n"))] {
-					// 读取ssh输出，发送到websocket中
-					err := mySSh.Websocket.WriteMessage(websocket.TextMessage, []byte(v))
-					if err != nil {
-						fmt.Println("websocket发送数据失败：", err)
-						break
-					}
-				}
-				jenlins_log_count = len(strings.Split(logs, "\n"))
-				fmt.Println("当前日志长度", jenlins_log_count)
-				fmt.Println("我没发送完")
-			}
-			// 如果日志中包含"End of Pipeline"，就发送基于jenkins_log_count的日志后长度，到websocket中
-			if strings.Contains(logs, "End of Pipeline") {
-				fmt.Println("我即将结束啦")
-				for _, v := range strings.Split(logs, "\n")[jenlins_log_count:] {
-					// 读取ssh输出，发送到websocket中
-					err := mySSh.Websocket.WriteMessage(websocket.TextMessage, []byte(v))
-					if err != nil {
-						fmt.Println("websocket发送数据失败：", err)
-						mySSh.Websocket.Close()
-						break
-					}
-				}
-				fmt.Println("websocket关闭")
-				break
+				fmt.Println("websocket发送数据失败：", err)
+				mySSh.Websocket.Close()
+				return "递归结束"
+
 			}
 		}
 
-		// 如果jenkins日志长度发生变化，就发送到websocket中
-		// if len(strings.Split(logs, "\n")) > jenlins_log_count {
-		// 	for _, v := range strings.Split(logs, "\n")[jenlins_log_count:] {
-		// 		// 读取ssh输出，发送到websocket中
-		// 		err := mySSh.Websocket.WriteMessage(websocket.TextMessage, []byte(v))
-		// 		if err != nil {
-		// 			fmt.Println("websocket发送数据失败：", err)
-		// 			mySSh.Websocket.Close()
-		// 			break
-		// 		}
-		// 	}
-		// 	jenlins_log_count = len(strings.Split(logs, "\n"))
-		// }
-		// // 如果jenkins日志中包含End of Pipeline，就退出
-		// if strings.Contains(logs, "End of Pipeline") {
-		// 	fmt.Println("websocket关闭")
-		// 	mySSh.Websocket.Close()
-		// 	break
-		// }
+	} else {
+		jenkins_log_list_new := strings.Split(jenlins_log_new, "\n")[jenlins_log_count:jenkins_new_count]
+		// jenkins_log_list_new 转换成字符串
+		jenkins_log_str_new := strings.Join(jenkins_log_list_new, "\n")
+		// 如果jenkins_log_list_new为空
+		if len(jenkins_log_list_new) == 0 {
+			fmt.Println("jenkins_log_list_new为空")
+
+		} else {
+			for _, v := range strings.Split(jenkins_log_str_new, "\n") {
+				// 读取ssh输出，发送到websocket中
+				time.Sleep(2 * time.Second)
+				err := mySSh.Websocket.WriteMessage(websocket.TextMessage, []byte(v))
+				if err != nil {
+					fmt.Println("websocket发送数据失败：", err)
+					mySSh.Websocket.Close()
+					return "递归结束"
+				}
+			}
+		}
+
 	}
+	jenkins_log_repeat(jenkins_new_count, mySSh, client, jenkins, params)
+	return "递归结束"
+
 }
