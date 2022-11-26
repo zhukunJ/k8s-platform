@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/bndr/gojenkins"
 	"github.com/gin-gonic/gin"
@@ -24,10 +25,10 @@ type Intelops struct {
 
 // 根据传入参数build job
 func (i *Intelops) BuildJob(mjk *gojenkins.Jenkins, jobname string, params map[string]string) (string, string, error) {
-	// _, err := mjk.BuildJob(ctx, jobname, params)
-	// if err != nil {
-	// 	log.Println(err)
-	// }
+	_, err := mjk.BuildJob(ctx, jobname, params)
+	if err != nil {
+		log.Println(err)
+	}
 	//获取job的状态
 
 	job, err := mjk.GetJob(ctx, jobname)
@@ -121,6 +122,8 @@ func SendlogWeb(mySSh *MySSH) {
 	if strings.Contains(logs, "End of Pipeline") {
 		for _, v := range strings.Split(logs, "\n") {
 			// 读取ssh输出，发送到websocket中
+			// 0.5秒
+			time.Sleep(100 * time.Millisecond)
 			err := mySSh.Websocket.WriteMessage(websocket.TextMessage, []byte(v))
 			if err != nil {
 				fmt.Println("websocket发送数据失败：", err)
@@ -169,13 +172,16 @@ func jenkins_log_repeat(jenlins_log_count int, mySSh *MySSH, client *Intelops, j
 
 	} else {
 		jenkins_log_list_new := strings.Split(jenlins_log_new, "\n")[jenlins_log_count:jenkins_new_count]
+		// jenkins_log_list_new 转换成字符串
+		jenkins_log_str_new := strings.Join(jenkins_log_list_new, "\n")
 		// 如果jenkins_log_list_new为空
 		if len(jenkins_log_list_new) == 0 {
 			fmt.Println("jenkins_log_list_new为空")
 
 		} else {
-			for _, v := range jenkins_log_list_new {
+			for _, v := range strings.Split(jenkins_log_str_new, "\n") {
 				// 读取ssh输出，发送到websocket中
+				time.Sleep(2 * time.Second)
 				err := mySSh.Websocket.WriteMessage(websocket.TextMessage, []byte(v))
 				if err != nil {
 					fmt.Println("websocket发送数据失败：", err)
