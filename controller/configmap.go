@@ -1,20 +1,21 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/wonderivan/logger"
 	"k8s-platform/service"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/wonderivan/logger"
 )
 
 var ConfigMap configMap
 
-type configMap struct {}
+type configMap struct{}
 
 //ConfigMap列表，支持过滤、排序、分页
-func(p *configMap) GetConfigMaps(ctx *gin.Context) {
+func (p *configMap) GetConfigMaps(ctx *gin.Context) {
 	//匿名结构体，用于定义入参，get请求为form格式，其他请求为json格式
-	params := new(struct{
+	params := new(struct {
 		FilterName string `form:"filter_name"`
 		Namespace  string `form:"namespace"`
 		Page       int    `form:"page"`
@@ -25,7 +26,7 @@ func(p *configMap) GetConfigMaps(ctx *gin.Context) {
 	if err := ctx.Bind(params); err != nil {
 		logger.Error("参数绑定失败,", err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"msg": err.Error(),
+			"msg":  err.Error(),
 			"data": nil,
 		})
 		return
@@ -34,29 +35,30 @@ func(p *configMap) GetConfigMaps(ctx *gin.Context) {
 	data, err := service.ConfigMap.GetConfigMaps(params.FilterName, params.Namespace, params.Limit, params.Page)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"msg": err.Error(),
+			"msg":  err.Error(),
 			"data": nil,
 		})
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"msg": "获取ConfigMap列表成功",
+		"msg":  "获取ConfigMap列表成功",
 		"data": data,
 	})
 }
+
 //ConfigMap詳情
-func(p *configMap) GetConfigMapDetail(ctx *gin.Context) {
+func (p *configMap) GetConfigMapDetail(ctx *gin.Context) {
 	//匿名结构体，用于定义入参，get请求为form格式，其他请求为json格式
-	params := new(struct{
-		ConfigMapName    string `form:"configmap_name"`
-		Namespace  string `form:"namespace"`
+	params := new(struct {
+		ConfigMapName string `form:"configmap_name"`
+		Namespace     string `form:"namespace"`
 	})
 	//绑定参数，给匿名结构体中的属性赋值，值是入参
 	//form格式使用ctx.Bind方法，json格式使用ctx.ShouldBindJSON方法
 	if err := ctx.Bind(params); err != nil {
 		logger.Error("参数绑定失败,", err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"msg": err.Error(),
+			"msg":  err.Error(),
 			"data": nil,
 		})
 		return
@@ -65,7 +67,7 @@ func(p *configMap) GetConfigMapDetail(ctx *gin.Context) {
 	data, err := service.ConfigMap.GetConfigMapDetail(params.ConfigMapName, params.Namespace)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"msg": err.Error(),
+			"msg":  err.Error(),
 			"data": nil,
 		})
 		return
@@ -73,23 +75,24 @@ func(p *configMap) GetConfigMapDetail(ctx *gin.Context) {
 	//測試
 	//jsbyte, _ := json.Marshal(data)
 	ctx.JSON(http.StatusOK, gin.H{
-		"msg": "获取ConfigMap詳情成功",
+		"msg":  "获取ConfigMap詳情成功",
 		"data": data,
 	})
 }
+
 //刪除ConfigMap
-func(p *configMap) DeleteConfigMap(ctx *gin.Context) {
+func (p *configMap) DeleteConfigMap(ctx *gin.Context) {
 	//匿名结构体，用于定义入参，get请求为form格式，其他请求为json格式
-	params := new(struct{
-		ConfigMapName    string `json:"configmap_name"`
-		Namespace  string `json:"namespace"`
+	params := new(struct {
+		ConfigMapName string `json:"configmap_name"`
+		Namespace     string `json:"namespace"`
 	})
 	//绑定参数，给匿名结构体中的属性赋值，值是入参
 	//form格式使用ctx.Bind方法，json格式使用ctx.ShouldBindJSON方法
 	if err := ctx.ShouldBindJSON(params); err != nil {
 		logger.Error("参数绑定失败,", err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"msg": err.Error(),
+			"msg":  err.Error(),
 			"data": nil,
 		})
 		return
@@ -98,29 +101,30 @@ func(p *configMap) DeleteConfigMap(ctx *gin.Context) {
 	err := service.ConfigMap.DeleteConfigMap(params.ConfigMapName, params.Namespace)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"msg": err.Error(),
+			"msg":  err.Error(),
 			"data": nil,
 		})
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"msg": "刪除ConfigMap成功",
+		"msg":  "刪除ConfigMap成功",
 		"data": nil,
 	})
 }
+
 //更新ConfigMap
-func(p *configMap) UpdateConfigMap(ctx *gin.Context) {
+func (p *configMap) UpdateConfigMap(ctx *gin.Context) {
 	//匿名结构体，用于定义入参，get请求为form格式，其他请求为json格式
-	params := new(struct{
-		Content    string `json:"content"`
-		Namespace  string `json:"namespace"`
+	params := new(struct {
+		Content   string `json:"content"`
+		Namespace string `json:"namespace"`
 	})
 	//绑定参数，给匿名结构体中的属性赋值，值是入参
 	//form格式使用ctx.Bind方法，json格式使用ctx.ShouldBindJSON方法
 	if err := ctx.ShouldBindJSON(params); err != nil {
 		logger.Error("参数绑定失败,", err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"msg": err.Error(),
+			"msg":  err.Error(),
 			"data": nil,
 		})
 		return
@@ -130,13 +134,13 @@ func(p *configMap) UpdateConfigMap(ctx *gin.Context) {
 	err := service.ConfigMap.UpdateConfigMap(params.Namespace, params.Content)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"msg": err.Error(),
+			"msg":  err.Error(),
 			"data": nil,
 		})
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"msg": "更新ConfigMap成功",
+		"msg":  "更新ConfigMap成功",
 		"data": nil,
 	})
 }

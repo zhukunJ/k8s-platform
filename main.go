@@ -6,6 +6,7 @@ import (
 	"k8s-platform/middle"
 	"k8s-platform/router"
 	"k8s-platform/service"
+	"k8s-platform/service/cicd"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,8 @@ func main() {
 	r := gin.Default()
 	//初始化k8s client
 	service.K8s.Init()
+	//初始化Jenkins
+	cicd.Jenkins.Init()
 	//数据库初始化
 	db.Init()
 	//注册中间件

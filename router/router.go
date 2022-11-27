@@ -1,6 +1,7 @@
 package router
 
 import (
+	cicd "k8s-platform/controller/cicd"
 	"k8s-platform/mertics"
 	"k8s-platform/websocketflow"
 
@@ -39,13 +40,15 @@ func (r *router) InitApiRouter(router *gin.Engine) {
 		POST("/mertic/del", mertics.DeleteMertics).
 
 		// 远程执行命令
-		POST("/api/host/remoteexecution", controller.Remoteexecution.GetRemoteexecutions).
+		POST("/api/host/remoteexecution", controller.Remoteexecution.Remoteexecutions).
 
 		//websocket host
 		GET("/api/host/ws", websocketflow.RunWebSSH).
-
 		//websocket jenkinslogs
 		GET("/api/jenkinslogs/ws", websocketflow.RunWebLog).
+		// jenkins操作
+		GET("/api/jenkins/build", cicd.JenkinsBuild.BuildJob).
+		GET("/api/jenkins/result", cicd.JenkinsBuild.GetResult).
 
 		//deployment操作
 		GET("/api/k8s/deployments", controller.Deployment.GetDeployments).

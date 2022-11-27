@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"k8s-platform/service/cicd"
+
 	"github.com/bndr/gojenkins"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -17,18 +19,8 @@ var (
 	ctx = context.Background()
 )
 
-type Intelops struct {
-	Url      string
-	User     string
-	Password interface{}
-}
-
 // 根据传入参数build job
-func (i *Intelops) BuildJob(mjk *gojenkins.Jenkins, jobname string, params map[string]string) (string, string, error) {
-	_, err := mjk.BuildJob(ctx, jobname, params)
-	if err != nil {
-		log.Println(err)
-	}
+func GetJobDescribe(mjk *gojenkins.Jenkins, jobname string) (string, string, error) {
 	//获取job的状态
 
 	job, err := mjk.GetJob(ctx, jobname)
@@ -93,26 +85,11 @@ func RunWebLog(c *gin.Context) {
 
 // 读取ssh输出，发送到websocket中
 func SendlogWeb(mySSh *MySSH) {
-	client := &Intelops{
-		Url:      "http://114.55.233.102:8080/",
-		User:     "admin",
-		Password: "admin",
-	}
-
-	jenkins := gojenkins.CreateJenkins(nil, client.Url, client.User, client.Password)
-	_, err := jenkins.Init(ctx)
-
-	if err != nil {
-		log.Printf("ERR, %v\n", err)
-	}
-	log.Println("Jenkins UP")
-
-	// build demo job and params : CHANGE_TYPE = DEPLOY_PROD ,GITBRACH = master 基于匿名结构体
-	params := map[string]string{
-		"CHANGE_TYPE": "DEPLOY_PROD",
-		"GITBRACH":    "master",
-	}
-	status, logs, err := client.BuildJob(jenkins, "demo", params)
+	// params := map[string]string{
+	// 	"CHANGE_TYPE": "DEPLOY_PROD",
+	// 	"GITBRACH":    "master",
+	// }
+	status, logs, err := GetJobDescribe(cicd.Jenkins.JenkinsClientSet, "demo")
 	if err != nil {
 		log.Printf("ERR, %v\n", err)
 	}
@@ -150,15 +127,12 @@ func SendlogWeb(mySSh *MySSH) {
 			fmt.Println("for循环开始了!")
 			time.Sleep(1000 * time.Millisecond)
 			// 获取最后构建的日志
-			job, err := jenkins.GetJob(ctx, "demo")
+			status, logs, err := GetJobDescribe(cicd.Jenkins.JenkinsClientSet, "demo")
 			if err != nil {
 				log.Printf("ERR, %v\n", err)
 			}
-			lastBuild, err := job.GetLastBuild(ctx)
-			if err != nil {
-				log.Printf("ERR, %v\n", err)
-			}
-			logs := lastBuild.GetConsoleOutput(ctx)
+			log.Println(status)
+
 			// 如果日志长度不一样，就发送基于jenkins_log_count的日志后长度，到websocket中
 			if len(strings.Split(logs, "\n")) > jenlins_log_count {
 				for _, v := range strings.Split(logs, "\n")[jenlins_log_count:len(strings.Split(logs, "\n"))] {
@@ -190,24 +164,5 @@ func SendlogWeb(mySSh *MySSH) {
 			}
 		}
 
-		// 如果jenkins日志长度发生变化，就发送到websocket中
-		// if len(strings.Split(logs, "\n")) > jenlins_log_count {
-		// 	for _, v := range strings.Split(logs, "\n")[jenlins_log_count:] {
-		// 		// 读取ssh输出，发送到websocket中
-		// 		err := mySSh.Websocket.WriteMessage(websocket.TextMessage, []byte(v))
-		// 		if err != nil {
-		// 			fmt.Println("websocket发送数据失败：", err)
-		// 			mySSh.Websocket.Close()
-		// 			break
-		// 		}
-		// 	}
-		// 	jenlins_log_count = len(strings.Split(logs, "\n"))
-		// }
-		// // 如果jenkins日志中包含End of Pipeline，就退出
-		// if strings.Contains(logs, "End of Pipeline") {
-		// 	fmt.Println("websocket关闭")
-		// 	mySSh.Websocket.Close()
-		// 	break
-		// }
 	}
 }

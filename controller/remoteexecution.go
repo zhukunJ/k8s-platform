@@ -14,7 +14,7 @@ var Remoteexecution remoteexecution
 // 远程执行命令
 type remoteexecution struct{}
 
-func (p *remoteexecution) GetRemoteexecutions(ctx *gin.Context) {
+func (p *remoteexecution) Remoteexecutions(ctx *gin.Context) {
 	params := new(struct {
 		Name string `form:"name"`
 	})

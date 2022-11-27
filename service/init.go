@@ -1,8 +1,9 @@
 package service
 
 import (
-	"github.com/wonderivan/logger"
 	"k8s-platform/config"
+
+	"github.com/wonderivan/logger"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 )
@@ -13,7 +14,7 @@ type k8s struct {
 	ClientSet *kubernetes.Clientset
 }
 
-func(k *k8s) Init() {
+func (k *k8s) Init() {
 	conf, err := clientcmd.BuildConfigFromFlags("", config.KubeConfig)
 	if err != nil {
 		logger.Error("创建k8s配置失败", err)
