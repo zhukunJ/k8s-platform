@@ -10,13 +10,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//实例化router结构体，可使用该对象点出首字母大写的方法（跨包调用）
+// 实例化router结构体，可使用该对象点出首字母大写的方法（跨包调用）
 var Router router
 
-//创建router结构体
+// 创建router结构体
 type router struct{}
 
-//初始化路由规则，创建测试api接口
+// 初始化路由规则，创建测试api接口
 func (r *router) InitApiRouter(router *gin.Engine) {
 	router.
 		//登录
@@ -47,8 +47,8 @@ func (r *router) InitApiRouter(router *gin.Engine) {
 		//websocket jenkinslogs
 		GET("/api/jenkinslogs/ws", websocketflow.RunWebLog).
 		// jenkins操作
-		GET("/api/jenkins/build", cicd.JenkinsBuild.BuildJob).
-		GET("/api/jenkins/result", cicd.JenkinsBuild.GetResult).
+		POST("/api/jenkins/build", cicd.JenkinsBuild.BuildJob).
+		GET("/api/jenkins/jobs", cicd.JenkinsBuild.GetJobAll).
 
 		//deployment操作
 		GET("/api/k8s/deployments", controller.Deployment.GetDeployments).

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin" // go get -u github.com/gin-gonic/gin
 	"github.com/gorilla/websocket"
 	"github.com/wonderivan/logger"
 	"golang.org/x/crypto/ssh"

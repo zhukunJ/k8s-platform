@@ -14,22 +14,21 @@ var JenkinsBuild jenkinsbuild
 type jenkinsbuild struct{}
 
 func (p *jenkinsbuild) BuildJob(ctx *gin.Context) {
-	// params := new(struct {
-	// 	Name string `form:"name"`
-	// })
-	// if err := ctx.Bind(params); err != nil {
-	// 	logger.Error("参数绑定失败,", err)
-	// 	ctx.JSON(http.StatusBadRequest, gin.H{
-	// 		"msg":  err.Error(),
-	// 		"data": nil,
-	// 	})
-	// 	return
-	// }
-	params := map[string]string{
+	params := new(struct {
+		Name string `form:"name"`
+	})
+	if err := ctx.Bind(params); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"msg":  err.Error(),
+			"data": nil,
+		})
+		return
+	}
+	params2 := map[string]string{
 		"CHANGE_TYPE": "DEPLOY_PROD",
 		"GITBRACH":    "master",
 	}
-	data, err := cicd.JenkinsBuild.BuildJob("demo", params)
+	data, err := cicd.JenkinsBuild.BuildJob(params.Name, params2)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"msg":  err.Error(),
@@ -43,7 +42,7 @@ func (p *jenkinsbuild) BuildJob(ctx *gin.Context) {
 	})
 }
 
-func (p *jenkinsbuild) GetResult(ctx *gin.Context) {
+func (p *jenkinsbuild) GetJobAll(ctx *gin.Context) {
 	// params := new(struct {
 	// 	Name string `form:"name"`
 	// })
@@ -56,7 +55,7 @@ func (p *jenkinsbuild) GetResult(ctx *gin.Context) {
 	// 	return
 	// }
 
-	result, err := cicd.JenkinsBuild.GetResult("demo")
+	result, total, err := cicd.JenkinsBuild.GetJobAll()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"msg":  err.Error(),
@@ -65,7 +64,8 @@ func (p *jenkinsbuild) GetResult(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"msg":  "上一次构建结果",
-		"data": result,
+		"msg":   "上一次构建结果",
+		"data":  result,
+		"total": total,
 	})
 }

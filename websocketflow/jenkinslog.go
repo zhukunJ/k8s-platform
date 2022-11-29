@@ -13,6 +13,7 @@ import (
 	"github.com/bndr/gojenkins"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/wonderivan/logger"
 )
 
 var (
@@ -46,20 +47,19 @@ func LogIndex(logs string) string {
 
 // 程序入口
 func RunWebLog(c *gin.Context) {
-	//匿名结构体，用于定义入参，get请求为form格式，其他请求为json格式
-	// params := new(struct {
-	// 	Ip string `form:"ip"`
-	// })
-	// //绑定参数，给匿名结构体中的属性赋值，值是入参
-	// //form格式使用ctx.Bind方法，json格式使用ctx.ShouldBindJSON方法
-	// if err := c.Bind(params); err != nil {
-	// 	logger.Error("参数绑定失败,", err)
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"msg":  err.Error(),
-	// 		"data": nil,
-	// 	})
-	// 	return
-	// }
+	params := new(struct {
+		JobName string `form:"jobname"`
+	})
+	//绑定参数，给匿名结构体中的属性赋值，值是入参
+	//form格式使用ctx.Bind方法，json格式使用ctx.ShouldBindJSON方法
+	if err := c.Bind(params); err != nil {
+		logger.Error("参数绑定失败,", err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg":  err.Error(),
+			"data": nil,
+		})
+		return
+	}
 
 	mySSH := &MySSH{}
 
@@ -79,17 +79,17 @@ func RunWebLog(c *gin.Context) {
 	}
 	mySSH.Websocket = webcon // 将websocket连接保存到对象中
 
-	go SendlogWeb(mySSH)
+	go SendlogWeb(mySSH, params.JobName)
 
 }
 
 // 读取ssh输出，发送到websocket中
-func SendlogWeb(mySSh *MySSH) {
+func SendlogWeb(mySSh *MySSH, jobname string) {
 	// params := map[string]string{
 	// 	"CHANGE_TYPE": "DEPLOY_PROD",
 	// 	"GITBRACH":    "master",
 	// }
-	status, logs, err := GetJobDescribe(cicd.Jenkins.JenkinsClientSet, "demo")
+	status, logs, err := GetJobDescribe(cicd.Jenkins.JenkinsClientSet, jobname)
 	if err != nil {
 		log.Printf("ERR, %v\n", err)
 	}
@@ -127,7 +127,7 @@ func SendlogWeb(mySSh *MySSH) {
 			fmt.Println("for循环开始了!")
 			time.Sleep(1000 * time.Millisecond)
 			// 获取最后构建的日志
-			status, logs, err := GetJobDescribe(cicd.Jenkins.JenkinsClientSet, "demo")
+			status, logs, err := GetJobDescribe(cicd.Jenkins.JenkinsClientSet, jobname)
 			if err != nil {
 				log.Printf("ERR, %v\n", err)
 			}

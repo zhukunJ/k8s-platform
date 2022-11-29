@@ -224,6 +224,8 @@ func GetMertics(c *gin.Context) {
 		Items: deployments,
 	}
 
+	fmt.Println(da)
+
 	c.JSON(http.StatusOK, gin.H{
 		"code":  200,
 		"msg":   "success",
