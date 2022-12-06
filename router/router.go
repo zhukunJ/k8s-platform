@@ -1,14 +1,15 @@
 package router
 
 import (
+	"k8s-platform/controller"
 	cicd "k8s-platform/controller/cicd"
 	_ "k8s-platform/docs"
 	"k8s-platform/mertics"
 	"k8s-platform/websocketflow"
 
-	"k8s-platform/controller"
-
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // 实例化router结构体，可使用该对象点出首字母大写的方法（跨包调用）
@@ -20,7 +21,8 @@ type router struct{}
 // 初始化路由规则，创建测试api接口
 func (r *router) InitApiRouter(router *gin.Engine) {
 	router.
-
+		// swagger接口配置
+		GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler)).
 		//登录
 		POST("/api/login", controller.Login.Auth).
 		//用户权限
