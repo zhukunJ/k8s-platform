@@ -16,7 +16,14 @@ var Login login
 
 type login struct{}
 
-//验证账号密码
+// PingExample godoc
+// @Summary 登陆接口
+// @Schemes
+// @Description 登陆信息
+// @Tags  登陆接口
+// @Param User+Password body string true "账号名和密码"
+// @Success 200 { } json "{ "code": 200,"data": {"token": "intel-accessToken-e2dcf178-42de-415a-98d3-d1721a4ac58a-1670318553870"},"msg": "success"}"
+// @Router /api/login [POST]
 func (l *login) Auth(ctx *gin.Context) {
 	params := new(struct {
 		UserName string `json:"username"`
@@ -102,7 +109,7 @@ func (l *login) Logout(ctx *gin.Context) {
 	})
 }
 
-//workflow名字转换成ingress名字，添加-ing后缀
+// workflow名字转换成ingress名字，添加-ing后缀
 func generateusertoken(username string) (ingressName string) {
 	useruuid := uuid.NewV4().String()
 	usertime := time.Now().UnixNano() / 1e6

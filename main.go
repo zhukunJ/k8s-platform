@@ -9,7 +9,11 @@ import (
 	"k8s-platform/service/cicd"
 	"net/http"
 
+	_ "k8s-platform/docs"
+
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
@@ -31,6 +35,7 @@ func main() {
 		http.HandleFunc("/ws", service.Terminal.WsHandler)
 		http.ListenAndServe(":8081", nil)
 	}()
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	//gin程序启动
 	r.Run(config.ListenAddr)
 }

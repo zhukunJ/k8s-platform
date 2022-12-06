@@ -2,6 +2,7 @@ package router
 
 import (
 	cicd "k8s-platform/controller/cicd"
+	_ "k8s-platform/docs"
 	"k8s-platform/mertics"
 	"k8s-platform/websocketflow"
 
@@ -19,6 +20,7 @@ type router struct{}
 // 初始化路由规则，创建测试api接口
 func (r *router) InitApiRouter(router *gin.Engine) {
 	router.
+
 		//登录
 		POST("/api/login", controller.Login.Auth).
 		//用户权限

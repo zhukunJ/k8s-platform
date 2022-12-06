@@ -1,0 +1,23 @@
+info:
+  contact: {}
+paths:
+  /api/login:
+    post:
+      description: 登陆信息
+      parameters:
+      - description: 账号名和密码
+        in: body
+        name: User+Password
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: '{ "code": 200,"data": {"token": "intel-accessToken-e2dcf178-42de-415a-98d3-d1721a4ac58a-1670318553870"},"msg":
+            "success"}'
+          schema:
+            type: ""
+      summary: 登陆接口
+      tags:
+      - 登陆接口
+swagger: "2.0"
