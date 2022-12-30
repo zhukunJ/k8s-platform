@@ -22,7 +22,7 @@ type jenkins struct {
 
 func (j *jenkins) Init() {
 	client := &jenkins{
-		Url:      "http://114.55.233.102:8080/",
+		Url:      "http://101.42.13.214:8080/",
 		User:     "admin",
 		Password: "admin",
 	}

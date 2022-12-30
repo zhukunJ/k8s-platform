@@ -49,7 +49,7 @@ func (p *jenkinsBuild) BuildJob(job string, params map[string]string) (string, e
 func (p *jenkinsBuild) GetJobAll() (DeploymentsResp, int, error) {
 	var NewStatus DataOne
 
-	url := "http://admin:admin@114.55.233.102:8080/api/json?pretty=true"
+	url := "http://admin:wzzkj123@101.42.13.214:8080/api/json?pretty=true"
 	// 请求url 获取数据
 	resp, err := http.Get(url)
 	if err != nil {
