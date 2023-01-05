@@ -18,7 +18,7 @@ func main() {
 	//初始化gin对象
 	r := gin.Default()
 	//初始化k8s client
-	service.K8s.Init()
+	// service.K8s.Init()
 	//初始化Jenkins
 	cicd.Jenkins.Init()
 	//数据库初始化

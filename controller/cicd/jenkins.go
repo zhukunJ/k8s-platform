@@ -46,18 +46,6 @@ func (p *jenkinsbuild) BuildJob(ctx *gin.Context) {
 }
 
 func (p *jenkinsbuild) GetJobAll(ctx *gin.Context) {
-	// params := new(struct {
-	// 	Name string `form:"name"`
-	// })
-	// if err := ctx.Bind(params); err != nil {
-	// 	logger.Error("参数绑定失败,", err)
-	// 	ctx.JSON(http.StatusBadRequest, gin.H{
-	// 		"msg":  err.Error(),
-	// 		"data": nil,
-	// 	})
-	// 	return
-	// }
-
 	result, total, err := cicd.JenkinsBuild.GetJobAll()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{

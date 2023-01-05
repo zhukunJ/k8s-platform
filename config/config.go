@@ -16,7 +16,7 @@ const (
 	AdminPwd  = "123456"
 	//数据库配置
 	DbType     = "mysql"
-	DbHost     = "127.0.0.1"
+	DbHost     = "101.42.13.214"
 	DbPort     = 3306
 	DbName     = "access"
 	DbUser     = "root"
